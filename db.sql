@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS packages (
     `package_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    `app_id` varchar(50) NOT NULL UNIQUE,
-    `device` varchat(50) NOT NULL DEFAULT '',
+    `app_id` varchar(50) NOT NULL,
+    `device` varchat(50) NOT NULL,
     `name` varchat(50) NOT NULL DEFAULT '',
     `platform` varchar(7) NOT NULL DEFAULT 'Android',
     `type` varchar(6) NOT NULL DEFAULT 'app',
@@ -12,5 +12,6 @@ CREATE TABLE IF NOT EXISTS packages (
     `apk_size` INTEGER NOT NULL DEFAULT 0,
     `os_requirements` varchar(10) NOT NULL DEFAULT '',
     `tak_prereq` varchar(50) NOT NULL DEFAULT '',
-    `image` BLOB NOT NULL DEFAULT ''
+    `image` BLOB NOT NULL DEFAULT '',
+    UNIQUE (`app_id`, `device`)
 );

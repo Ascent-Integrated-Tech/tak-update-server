@@ -12,8 +12,15 @@ export class PackageModel {
     static async getById(packageId:number) : Promise<IPackage|null> {
         return (await DBHelper.get<IPackage>("SELECT * FROM packages WHERE package_id = ?", [packageId])) ?? null;
     }
-    static async getByAppId(appId:string) : Promise<IPackage|null> {
-        return (await DBHelper.get<IPackage>("SELECT * FROM packages WHERE app_id = ?", [appId])) ?? null;
+    static async getByAppId(appId:string, device: string) : Promise<IPackage|null> {
+        return (await DBHelper.get<IPackage>("SELECT * FROM packages WHERE app_id = ? AND device = ?", [appId, device])) ?? null;
+    }
+    static async getDevices(appId: string): Promise<string[] | null> {
+        let pkgs = await DBHelper.all<IPackage[]>("SELECT * FROM packages WHERE app_id = ?", [appId]) ?? null;
+        if (!pkgs || pkgs.length === 0) {
+            return null;
+        }
+        return pkgs.map(pkg => pkg.device);
     }
     static async add(appId:string, device: string) : Promise<number> {
         let platform = PackagePlatform.Android;

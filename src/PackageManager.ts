@@ -39,10 +39,10 @@ export class PackageManager {
         if (pkg === null)
             return false;
 
-        let origFile = await PackageModel.getByAppId(pkg.appId);
+        let origFile = await PackageModel.getByAppId(pkg.appId, device);
         let fileId;
 
-        if (origFile !== null) {
+        if (origFile !== null && origFile.device === device) {
             if (origFile.version_code >= pkg.version) {
                 console.log('[PackageManager] Trying to upload old version of ' + pkg.appId);
                 return false;
@@ -88,7 +88,7 @@ export class PackageManager {
                 p.name,
                 p.version,
                 p.version_code.toString(10),
-                HttpServer.getAPKUrl(p),
+                HttpServer.getAPKUrl(device, p),
                 'icon_' + p.package_id + '.png',
                 p.description,
                 p.apk_hash,

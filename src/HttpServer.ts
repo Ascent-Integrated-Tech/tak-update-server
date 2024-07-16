@@ -46,8 +46,8 @@ export class HttpServer {
 
         this.app.use('/:device/product.infz', (req, res, next) => {
             const device = req.params.device.toUpperCase();
-            const filePath = PackageManager.UPDATE_FILE[device];
-        
+            const filePath = PackageManager.UPDATE_FILE[device.toUpperCase()];
+
             if (filePath) {
                 res.sendFile(path.resolve(filePath), (err) => {
                     if (err) {
@@ -59,53 +59,79 @@ export class HttpServer {
             }
         });
 
-        this.app.get('/apk/:appId/latest', async (req, res) => {
+        // this.app.get('/:device/apk/:appId/latest', async (req, res) => {
+        //     let appId = req.params.appId ?? '';
+        //     res.redirect('/apk/' + appId + '/latest');
+        // });
+
+        this.app.get('/:device/apk/:appId/latest', async (req, res) => {
             let appId = req.params.appId ?? '';
+            let device = req.params.device ?? '';
 
             if (typeof appId !== 'string' || appId === '') {
                 res.status(404).end();
                 return;
             }
 
-            let pkg = await PackageModel.getByAppId(appId);
+            let pkg = await PackageModel.getByAppId(appId, device.toUpperCase());
 
             if (pkg === null) {
                 res.status(404).end();
                 return;
             }
 
-            res.redirect('/apk/' + pkg.app_id + '-' + pkg.version_code.toString(10) + '.apk');
+            res.redirect(`/${device.toUpperCase()}/apk/` + pkg.app_id + '-' + pkg.version_code.toString(10) + '.apk');
         });
 
-        this.app.get('/apk/:appId-:version.apk', async (req, res) => {
+        // this.app.get('/:device/apk/:appId-:version.apk', async (req, res) => {
+        //     let appId = req.params.appId ?? '';
+        //     let version = req.params.version ?? '';
+        //     res.redirect(`/apk/${appId}-${version}.apk`);
+        // });
+
+        this.app.get('/:device/apk/:appId-:version.apk', async (req, res) => {
             let appId = req.params.appId ?? '';
+            let device = req.params.device ?? '';
 
             if (typeof appId !== 'string' || appId === '') {
                 res.status(404).end();
                 return;
             }
 
-            let pkg = await PackageModel.getByAppId(appId);
+            let pkg = await PackageModel.getByAppId(appId, device.toUpperCase());
 
             if (pkg === null) {
                 res.status(404).end();
                 return;
             }
 
-            res.sendFile(PackageManager.STORAGE_DIR + '/' + pkg.package_id + '.apk', { root: '.' }, () => {
+            res.sendFile(PackageManager.STORAGE_DIR[device.toUpperCase()] + '/' + pkg.package_id + '.apk', { root: '.' }, () => {
                 res.status(404).end();
             });
         });
 
         this.app.get('/icon/:appId.png', async (req, res) => {
+            // Assuming app icon is the same for different devices
             let appId = req.params.appId ?? '';
+            let devices = await PackageModel.getDevices(appId);
+            console.log(devices);
+            if (!devices) {
+                res.status(404).end();
+                return;
+            }
+            res.redirect(`/${devices[0]}/icon/${appId}.png`);
+        })
+
+        this.app.get('/:device/icon/:appId.png', async (req, res) => {
+            let appId = req.params.appId ?? '';
+            let device = req.params.device ?? '';
 
             if (typeof appId !== 'string' || appId === '') {
                 res.status(404).end();
                 return;
             }
 
-            let pkg = await PackageModel.getByAppId(appId);
+            let pkg = await PackageModel.getByAppId(appId, device.toUpperCase());
 
             if (pkg === null) {
                 res.status(404).end();
@@ -127,7 +153,7 @@ export class HttpServer {
             let packages = await PackageModel.getAll_();
 
             for (let p of packages) {
-                txt += '<tr><td><img src="/icon/' + p.app_id + '.png" height="24"></td> <td>' + p.device + '</td> <td>' + p.name + ' (' + p.type + ')</td><td><a href="' + HttpServer.getAPKUrl(p) + '">' + p.app_id + '</a></td><td>' + p.version + ' (' + p.version_code.toString(10) + ')</td><td>' + p.description + '</td></tr>';
+                txt += '<tr><td><img src="/icon/' + p.app_id + '.png" height="24"></td> <td>' + p.device + '</td> <td>' + p.name + ' (' + p.type + ')</td><td><a href="' + HttpServer.getAPKUrl(p.device, p) + '">' + p.app_id + '</a></td><td>' + p.version + ' (' + p.version_code.toString(10) + ')</td><td>' + p.description + '</td></tr>';
             }
 
             txt += '</table>';
@@ -179,8 +205,8 @@ export class HttpServer {
         }));
     }
 
-    public static getAPKUrl(pkg: IPackage): string {
-        return '/apk/' + pkg.app_id + '-' + pkg.version_code.toString(10) + '.apk';
+    public static getAPKUrl(device: string, pkg: IPackage): string {
+        return `/${device}/apk/` + pkg.app_id + '-' + pkg.version_code.toString(10) + '.apk';
     }
 
     public static get Instance() {
