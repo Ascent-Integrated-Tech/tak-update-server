@@ -25,7 +25,7 @@ export class HttpServer {
     addRoutes() {
         this.app.all('*', (req, res, next) => {
             console.log('[HTTPServer] ' + (req.headers['x-real-ip'] ?? req.ip) + ' ' + req.method + ' ' + req.url);
-            console.log('[HEADERS]' + req.headers);
+            console.log('[HEADERS]' + JSON.stringify(req.headers, null, 2));
             next();
         });
 
