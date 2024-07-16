@@ -4,6 +4,7 @@ import { PackageManager } from "./PackageManager";
 import { PackageModel } from "./DB/PackageModel";
 import { IPackage } from "./DB/Interfaces";
 import fs from "fs/promises";
+import useragent from 'express-useragent';
 
 const TOKEN = process.env.ACCESS_TOKEN ?? '';
 
@@ -15,6 +16,7 @@ export class HttpServer {
         this.app.use(fileUpload({
             useTempFiles: true,
         }));
+        this.app.use(useragent.express());
     }
 
     start() {
@@ -26,6 +28,7 @@ export class HttpServer {
         this.app.all('*', (req, res, next) => {
             console.log('[HTTPServer] ' + (req.headers['x-real-ip'] ?? req.ip) + ' ' + req.method + ' ' + req.url);
             console.log('[HEADERS]' + JSON.stringify(req.headers, null, 2));
+            console.log('[USER-AGENT]' + JSON.stringify(req.useragent, null, 2));
             next();
         });
 
