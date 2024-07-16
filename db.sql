@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS packages (
     `package_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     `app_id` varchar(50) NOT NULL UNIQUE,
+    `device` varchat(50) NOT NULL DEFAULT '',
     `name` varchat(50) NOT NULL DEFAULT '',
     `platform` varchar(7) NOT NULL DEFAULT 'Android',
     `type` varchar(6) NOT NULL DEFAULT 'app',

@@ -2,3 +2,8 @@ build/
 node_modules/
 tmp/
 stuff/
+
+**.sqlite
+**.apk
+**.inf
+**.infz

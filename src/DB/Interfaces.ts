@@ -4,6 +4,7 @@ export interface IPackage {
     package_id: number,
     app_id: string,
     name: string
+    device: string
     platform: PackagePlatform
     type: PackageType
     version: string
