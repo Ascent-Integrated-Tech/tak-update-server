@@ -3,13 +3,16 @@ import fileUpload from 'express-fileupload';
 import { PackageManager } from "./PackageManager";
 import { PackageModel } from "./DB/PackageModel";
 import { IPackage } from "./DB/Interfaces";
+import fb from "fs";
 import fs from "fs/promises";
 import useragent from 'express-useragent';
+import path from "path";
 
 const TOKEN = process.env.ACCESS_TOKEN ?? '';
 
 export class HttpServer {
     private static _instance: HttpServer;
+    logFile = path.join(__dirname, 's.log');
     app = express();
 
     constructor() {
@@ -24,11 +27,18 @@ export class HttpServer {
         this.app.listen(8019);
     }
 
+    logRequest(req: express.Request) {
+        const logMessage = `[HTTPServer] ${req.headers['x-real-ip'] ?? req.ip} ${req.method} ${req.url}\n` +
+            `[HEADERS] ${JSON.stringify(req.headers, null, 2)}\n` +
+            `[User-Agent] ${JSON.stringify(req.useragent, null, 2)}\n\n`;
+
+        fb.appendFileSync(this.logFile, logMessage);
+    }
+
     addRoutes() {
         this.app.all('*', (req, res, next) => {
             console.log('[HTTPServer] ' + (req.headers['x-real-ip'] ?? req.ip) + ' ' + req.method + ' ' + req.url);
-            console.log('[HEADERS]' + JSON.stringify(req.headers, null, 2));
-            console.log('[USER-AGENT]' + JSON.stringify(req.useragent, null, 2));
+            this.logRequest(req);
             next();
         });
 
