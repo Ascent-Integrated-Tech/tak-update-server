@@ -43,8 +43,13 @@ export class PackageManager {
         let fileId;
 
         if (origFile !== null && origFile.device === device) {
-            if (origFile.version_code >= pkg.version) {
-                console.log(`[PackageManager] Trying to upload old version of ${pkg.appId}, ${origFile.version_code} -> ${pkg.version}`);
+            // if (origFile.version_code >= pkg.version) {
+            //     console.log(`[PackageManager] Trying to upload old version of ${pkg.appId}, ${origFile.version_code} -> ${pkg.version}`);
+            //     return false;
+            // }
+
+            if (origFile.version === pkg.versionName) {
+                console.log(`[PackageManager] Trying to upload an identical version ${pkg.appId}`);
                 return false;
             }
 
@@ -125,8 +130,8 @@ export class PackageManager {
         try {
             const manifest = await apk.getManifestInfo();
             const resources = await apk.getResources();
-            console.log(JSON.stringify(manifest.raw));
-            console.log(JSON.stringify(resources));
+            // console.log(JSON.stringify(manifest.raw));
+            // console.log(JSON.stringify(resources));
             const name = typeof manifest.applicationLabel === 'string' ? manifest.applicationLabel : resources.resolve(manifest.applicationLabel as number)[0].value;
             const minSDK = manifest.raw.children['uses-sdk'][0].attributes.minSdkVersion; //TODO: validate ?
             const icon = manifest.raw.children.application[0].attributes.icon;
