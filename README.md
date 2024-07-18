@@ -1,8 +1,6 @@
 # TAK Update Server
-This is my own implementation of the TAK update protocol/server.
-At the moment it only provides basic functionality like uploading plugins/apps and downloading them from the ATAK app.
-Currently, only the ATAK application and plugins are supported.
 
+Forked from `https://github.com/rick51231/tak-update-server` and created by `@rick51231`.
 
 ### Installation
 - Install requirements via `npm install`
@@ -11,12 +9,14 @@ Currently, only the ATAK application and plugins are supported.
 - Run app via `node build/index.js`
 - Upload plugins via `http://localhost:8019/manage?token=<your access token>`
 
-### Usage
+### ATAK Usage
 
 #### 1. Put in the URL
 - Open menu `ATAK app > More icon > Plugins > More icon > Edit`
 - Enable option `Update Server`
-- Enter your server url into `Update Server URL`
+- Enter the server url into `Update Server URL`
+    - When using this implementation, the url needs to have a `target device` extension (`TAB | PHN`)
+    - **e.g.** `https://{url}/TAB`
 
 #### 2. Generate PKCS12 keystore file
 - Have a domain name (we're currently running `taktest.ascentapi.com`) and setup record with DNS service.
