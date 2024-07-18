@@ -44,7 +44,7 @@ export class PackageManager {
 
         if (origFile !== null && origFile.device === device) {
             if (origFile.version_code >= pkg.version) {
-                console.log('[PackageManager] Trying to upload old version of ' + pkg.appId);
+                console.log(`[PackageManager] Trying to upload old version of ${pkg.appId}, ${origFile.version_code}->${pkg.version}`);
                 return false;
             }
 
