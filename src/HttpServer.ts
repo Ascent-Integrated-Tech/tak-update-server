@@ -153,7 +153,7 @@ export class HttpServer {
             let packages = await PackageModel.getAll_();
 
             for (let p of packages) {
-                txt += '<tr><td><img src="/icon/' + p.app_id + '.png" height="24"></td> <td>' + p.device + '</td> <td>' + p.name + ' (' + p.type + ')</td><td><a href="' + HttpServer.getAPKUrl(p.device, p) + '">' + p.app_id + '</a></td><td>' + p.version + ' (' + p.version_code.toString(10) + ')</td><td>' + p.description + '</td></tr>';
+                txt += '<tr><td><img src="/icon/' + p.app_id + '.png" height="24"></td> <td>' + p.device + '</td> <td>' + p.name + ' (' + p.type + ')</td><td><a href="' + HttpServer.getAPKUrlwD(p.device, p) + '">' + p.app_id + '</a></td><td>' + p.version + ' (' + p.version_code.toString(10) + ')</td><td>' + p.description + '</td></tr>';
             }
 
             txt += '</table>';
@@ -205,8 +205,12 @@ export class HttpServer {
         }));
     }
 
-    public static getAPKUrl(device: string, pkg: IPackage): string {
+    public static getAPKUrlwD(device: string, pkg: IPackage): string {
         return `/${device}/apk/` + pkg.app_id + '-' + pkg.version_code.toString(10) + '.apk';
+    }
+
+    public static getAPKUrl(pkg: IPackage): string {
+        return `/apk/` + pkg.app_id + '-' + pkg.version_code.toString(10) + '.apk';
     }
 
     public static get Instance() {
