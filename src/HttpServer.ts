@@ -114,7 +114,6 @@ export class HttpServer {
             // Assuming app icon is the same for different devices
             let appId = req.params.appId ?? '';
             let devices = await PackageModel.getDevices(appId);
-            console.log(devices);
             if (!devices) {
                 res.status(404).end();
                 return;
