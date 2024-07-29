@@ -42,7 +42,15 @@ export class HttpServer {
             next();
         });
 
-        // this.app.use('/product.infz', express.static(PackageManager.UPDATE_FILE));
+        this.app.use(express.static(path.join(__dirname, '../ui/build')));
+
+        this.app.get('/manage', (req, res) => {
+            if (req.query.token !== TOKEN) {
+                res.status(404).end();
+                return;
+            }
+            res.sendFile(path.join(__dirname, '../ui/build', 'index.html'));
+        });
 
         this.app.use('/:device/product.infz', (req, res, next) => {
             const device = req.params.device.toUpperCase();
@@ -58,11 +66,6 @@ export class HttpServer {
                 res.status(404).send('File not found');
             }
         });
-
-        // this.app.get('/:device/apk/:appId/latest', async (req, res) => {
-        //     let appId = req.params.appId ?? '';
-        //     res.redirect('/apk/' + appId + '/latest');
-        // });
 
         this.app.get('/:device/apk/:appId/latest', async (req, res) => {
             let appId = req.params.appId ?? '';
@@ -82,12 +85,6 @@ export class HttpServer {
 
             res.redirect(`/${device.toUpperCase()}/apk/` + pkg.app_id + '-' + pkg.version_code.toString(10) + '.apk');
         });
-
-        // this.app.get('/:device/apk/:appId-:version.apk', async (req, res) => {
-        //     let appId = req.params.appId ?? '';
-        //     let version = req.params.version ?? '';
-        //     res.redirect(`/apk/${appId}-${version}.apk`);
-        // });
 
         this.app.get('/:device/apk/:appId-:version.apk', async (req, res) => {
             let appId = req.params.appId ?? '';
@@ -141,53 +138,15 @@ export class HttpServer {
             res.send(pkg.image);
         });
 
-        this.app.get('/manage', (async (req, res) => {
+        // New endpoint to serve the package data as JSON
+        this.app.get('/api/packages', async (req, res) => {
             if (req.query.token !== TOKEN) {
                 res.status(404).end();
                 return;
             }
-            let txt = '';
-
-            txt += '<table border=1><tr><th></th><th>Device</th><th>Name</th><th>AppID</th><th>Version</th><th>Description</th></tr>';
             let packages = await PackageModel.getAll_();
-
-            for (let p of packages) {
-                txt += '<tr><td><img src="/icon/' + p.app_id + '.png" height="24"></td> <td>' + p.device + '</td> <td>' + p.name + ' (' + p.type + ')</td><td><a href="' + HttpServer.getAPKUrlwD(p.device, p) + '">' + p.app_id + '</a></td><td>' + p.version + ' (' + p.version_code.toString(10) + ')</td><td>' + p.description + '</td></tr>';
-            }
-
-            txt += '</table>';
-            txt += '<br>';
-            txt += '<br>';
-
-
-            txt += `
-            <form method="POST" action="/TAB/upload?token=${TOKEN}" enctype="multipart/form-data" id="uploadForm">
-                <label for="device">Target Hardware:</label>
-                <select name="device" id="device">
-                    <option value="TAB">Tablet</option>
-                    <option value="PHN">Phone</option>
-                </select>
-                <input type="file" name="plugin">
-                <input type="submit" value="Upload">
-            </form>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var form = document.getElementById('uploadForm');
-                    var deviceSelect = document.getElementById('device');
-                    
-                    // Set initial form action based on the default selected value
-                    form.action = '/' + deviceSelect.value + '/upload?token=${TOKEN}';
-                    
-                    // Update form action on device selection change
-                    deviceSelect.addEventListener('change', function() {
-                        form.action = '/' + this.value + '/upload?token=${TOKEN}';
-                    });
-                });
-            </script>
-            `;
-
-            res.send(txt);
-        }));
+            res.json(packages);
+        });
 
         this.app.post('/:device/upload', (async (req, res) => {
             if (req.query.token !== TOKEN) {
@@ -200,7 +159,26 @@ export class HttpServer {
                 await PackageManager.Instance.importFile(device, req.files.plugin.tempFilePath);
                 await fs.unlink(req.files.plugin.tempFilePath);
             }
-            res.redirect('/manage?token=' + TOKEN);
+            res.redirect(`/manage?token=${TOKEN}`);
+        }));
+
+        this.app.delete('/:device/delete/:appId', (async (req, res) => {
+            if (req.query.token !== TOKEN) {
+                res.status(404).end();
+                return;
+            }
+
+            const device = req.params.device.toUpperCase();
+            const appId = req.params.appId;
+
+            console.log(`Delete request for package ID: ${req.params.appId}`);
+            try {
+                await PackageManager.Instance.deletePackage(appId, device);
+                res.status(200).json({ message: 'Package deleted successfully' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ message: 'Failed to delete package' });
+            }
         }));
     }
 

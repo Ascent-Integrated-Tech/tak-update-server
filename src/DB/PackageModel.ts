@@ -33,4 +33,8 @@ export class PackageModel {
         await DBHelper.run("UPDATE packages SET device = ?, name = ?, type = ?, version = ?, version_code = ?, apk_hash = ?, apk_size = ?, os_requirements = ?, description = ?, image = ? WHERE package_id = ?",
         [device, name, type, version, versionCode, apkHash, apkSize, osRequirements, description, image, packageId]);
     }
+
+    static async deleteByAppId(appId: string, device: string): Promise<void> {
+        await DBHelper.run("DELETE FROM packages WHERE app_id = ? AND device = ?", [appId, device]);
+    }
 }

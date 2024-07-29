@@ -4,7 +4,7 @@ Forked from `https://github.com/rick51231/tak-update-server` and created by `@ri
 
 ### Installation
 - Install requirements via `npm install`
-- Build project via `npx tsc`
+- Build project via `cd ui && npm run build && cd .. && npx tsc`
 - Set the `ACCESS_TOKEN` environment variable with your management token. Bash example: `export ACCESS_TOKEN=16123123123`
 - Run app via `node build/index.js`
 - Upload plugins via `http://localhost:8019/manage?token=<your access token>`

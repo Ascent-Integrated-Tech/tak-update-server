@@ -169,6 +169,29 @@ export class PackageManager {
         }
     }
 
+    async deletePackage(appId: string, device: string): Promise<boolean> {
+        try {
+            const pkg = await PackageModel.getByAppId(appId, device);
+            if (!pkg) {
+                console.error(`[PackageManager] Package ${appId} not found for device ${device}`);
+                return false;
+            }
+
+            const filePath = this.getFilePath(device, pkg.package_id);
+            await fs.unlink(filePath);
+            await PackageModel.deleteByAppId(appId, device);
+
+            console.log(`[PackageManager] Deleted package ${appId} for device ${device}`);
+            
+            await this.generateUpdateFile(device);
+
+            return true;
+        } catch (error) {
+            console.error(`[PackageManager] Error deleting package ${appId} for device ${device}:`, error);
+            return false;
+        }
+    }
+
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }
