@@ -64,7 +64,7 @@ label {
     color: #333;
 }
 
-select, input[type="file"], input[type="submit"] {
+select, input[type="file"], input[type="submit"], input[type="button"] {
     margin-bottom: 15px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -80,4 +80,15 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
     background-color: #45a049;
+}
+
+input[type="button"] {
+    background-color: #a04568;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="button"]:hover {
+    background-color: #a04568;
 }

@@ -3,11 +3,13 @@ import "./App.css";
 import PackageTable from "./PackageTable";
 import UploadForm from "./UploadForm";
 
+const TOKEN = "lmao69";
+
 function App() {
     const [packages, setPackages] = useState([]);
 
     const fetchPackages = async () => {
-        const response = await fetch("/api/packages?token=lmao69");
+        const response = await fetch(`/api/packages?token=${TOKEN}`);
         const data = await response.json();
         setPackages(data);
     };
@@ -21,8 +23,8 @@ function App() {
     };
 
     const handleDeletePackage = async (appId, device) => {
-        const response = await fetch(`/${device}/delete/${appId}?token=lmao69`, {
-            method: 'DELETE',
+        const response = await fetch(`/${device}/delete/${appId}?token=${TOKEN}`, {
+            method: "DELETE"
         });
 
         if (response.ok) {
@@ -34,7 +36,7 @@ function App() {
         <div className="App">
             <div className="container">
                 <PackageTable packages={packages} onDelete={handleDeletePackage} />
-                <UploadForm token="lmao69" onUploadSuccess={handleUploadSuccess} />
+                <UploadForm token={TOKEN} onUploadSuccess={handleUploadSuccess} />
             </div>
         </div>
     );
