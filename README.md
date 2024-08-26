@@ -25,7 +25,7 @@ Forked from `https://github.com/rick51231/tak-update-server` and created by `@ri
 - Export PKCS12 keystore:
 
 ```shell
-openssl pkcs12 -export -legacy \
+sudo openssl pkcs12 -export -legacy \
     -in /etc/letsencrypt/live/<yourdomain.com>/fullchain.pem \
     -inkey /etc/letsencrypt/live/<yourdomain.com>/privkey.pem \
     -out <filename>.p12 \
@@ -33,9 +33,10 @@ openssl pkcs12 -export -legacy \
     -CAfile /etc/letsencrypt/live/<yourdomain.com>/chain.pem \
     -caname "Let's Encrypt Authority"
 ```
+
 - You might have to change the folder access permissions, if it gives you trouble then do `sudo chmod +rw /etc/letsencrypt/live`.
-- Once you see the `keystore.p12` file, give it read access and download it, make sure to set a passphrase when prompted.
+- Once you see the `<filename>.p12` file, give it read access and download it, make sure to set a non-empty passphrase when prompted.
 - Download the file and transfer it to your android device.
 - Install the certificate by opening it and input the passphrase.
-- Open TAK, go to where you set up the update server URL, you should see a `PKCS12 TrustStore Location` and `PKCS12 TrustStore Password`, input the keystore location and passphrase respectively.
+- Open ATAK, go to where you set up the update server URL, you should see a `PKCS12 TrustStore Location` and `PKCS12 TrustStore Password`, input the keystore location and passphrase respectively.
 - Click sync, it should work (as long as the update server is up and running).
