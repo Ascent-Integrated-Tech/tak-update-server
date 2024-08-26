@@ -25,10 +25,10 @@ Forked from `https://github.com/rick51231/tak-update-server` and created by `@ri
 - Export PKCS12 keystore:
 
 ```shell
-openssl pkcs12 -export \
+openssl pkcs12 -export -legacy \
     -in /etc/letsencrypt/live/<yourdomain.com>/fullchain.pem \
     -inkey /etc/letsencrypt/live/<yourdomain.com>/privkey.pem \
-    -out keystore.p12 \
+    -out <filename>.p12 \
     -name "<yourdomain.com>-cert" \
     -CAfile /etc/letsencrypt/live/<yourdomain.com>/chain.pem \
     -caname "Let's Encrypt Authority"
