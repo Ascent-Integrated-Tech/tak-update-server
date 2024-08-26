@@ -19,7 +19,7 @@ Forked from `https://github.com/rick51231/tak-update-server` and created by `@ri
     - **e.g.** `https://{url}/TAB`
 
 #### 2. Generate PKCS12 keystore file
-- Have a domain name (we're currently running `taktest.ascentapi.com`) and setup record with DNS service.
+- Have a domain name (we're currently running `atak.ascentapi.com`) and setup record with DNS service.
 - Shell into cloud VM of choice, obtain certificates with `certbot`.
 - Setup `Nginx` proxy and configure to use the certbot certifications.
 - Export PKCS12 keystore:
